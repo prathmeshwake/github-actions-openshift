@@ -3,7 +3,7 @@ const app = express();
 const PORT = 8080;
 
 app.get('/', (req, res) => {
-  res.send('🚀 Deployed to OpenShift using GitHub Actions + Docker Hub!');
+  res.send('Hello Deployed to OpenShift using GitHub Actions + Docker Hub!');
 });
 
 app.listen(PORT, () => {
