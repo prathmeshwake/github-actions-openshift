@@ -15,5 +15,7 @@ spec:
       containers:
         - name: demo-app
           image: docker.io/prathmeshwake/demo-app:latest
+          imagePullPolicy: Always   # <-- ADD THIS LINE
+
           ports:
             - containerPort: 8080
