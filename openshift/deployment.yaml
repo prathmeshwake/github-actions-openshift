@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: demo-app
+  name: new-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: demo-app
+      app: new-app
   template:
     metadata:
       labels:
-        app: demo-app
+        app: new-app
     spec:
       containers:
-        - name: demo-app
-          image: docker.io/prathmeshwake/demo-app:latest
+        - name: new-app
+          image: docker.io/prathmeshwake/new-app:latest
           imagePullPolicy: Always   # <-- ADD THIS LINE
 
           ports:
