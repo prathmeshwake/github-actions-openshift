@@ -28,14 +28,13 @@ httpRoute:
   hosts: []
   paths: []
 
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 80
+
 env:
   - name: DB_USER
     valueFrom:
-      secretKeyRef:
-        name: app-secrets
-        key: DB_USER
-  - name: DB_PASS
-    valueFrom:
-      secretKeyRef:
-        name: app-secrets
-        key: DB_PASS
+      secret
