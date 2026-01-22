@@ -40,17 +40,20 @@ jobs:
       - name: Helm Deploy (Blue/Green)
         run: |
           helm upgrade --install new-app ./helm-chart \
+            --namespace ${{ secrets.OPENSHIFT_NAMESPACE }} \
             --set image.repository=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/new-app \
             --set image.tag=${{ github.sha }} \
             --set activeColor=${{ steps.color.outputs.next }}
 
+            
+
       - name: Health Check Validation
         run: |
           sleep 20
-          URL=$(oc get route enterprise-app -o jsonpath='{.spec.host}')
+          URL=$(oc get route new-app -o jsonpath='{.spec.host}')
           curl -f http://$URL/health
 
       - name: Rollback on Failure
         if: failure()
         run: |
-          helm rollback enterprise-app
+          helm rollback new-app
