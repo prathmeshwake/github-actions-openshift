@@ -1,40 +1,58 @@
+# replicas
 replicaCount: 1
 
+# app-specific settings
 app:
   name: new-app
 
+# Docker image settings
 image:
   repository: docker.io/prathmeshwake/new-app
   tag: latest
 
+# Service configuration
 service:
+  type: ClusterIP      # must be string for NOTES.txt
   port: 8080
 
-activeColor: blue
+# Blue/Green deployment
+activeColor: blue      # current active deployment
 
+# Service account (disable creation in OpenShift free tier)
 serviceAccount:
   create: false
   name: ""
 
+# Ingress (disable, OpenShift uses Route)
 ingress:
   enabled: false
   annotations: {}
   hosts: []
   tls: []
 
+# HTTPRoute (disable for sandbox)
 httpRoute:
   enabled: false
   annotations: {}
   hosts: []
   paths: []
 
+# HPA (disable for sandbox)
 autoscaling:
   enabled: false
   minReplicas: 1
   maxReplicas: 2
   targetCPUUtilizationPercentage: 80
 
+# Environment variables injected from OpenShift secret
 env:
   - name: DB_USER
     valueFrom:
-      secret
+      secretKeyRef:
+        name: app-secrets
+        key: DB_USER
+  - name: DB_PASS
+    valueFrom:
+      secretKeyRef:
+        name: app-secrets
+        key: DB_PASS
