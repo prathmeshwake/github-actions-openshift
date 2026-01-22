@@ -45,8 +45,6 @@ jobs:
             --set image.tag=${{ github.sha }} \
             --set activeColor=${{ steps.color.outputs.next }}
 
-            
-
       - name: Health Check Validation
         run: |
           sleep 20
