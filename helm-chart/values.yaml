@@ -1,7 +1,7 @@
 replicaCount: 1
 
 app:
-  name: new-app   # <--- THIS MUST MATCH your deployment
+  name: new-app
 
 image:
   repository: docker.io/prathmeshwake/new-app
@@ -10,4 +10,8 @@ image:
 service:
   port: 8080
 
-activeColor: blue  # if you use blue/green switching
+activeColor: blue  # for blue/green
+
+serviceAccount:
+  create: false
+  name: ""
