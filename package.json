@@ -1,5 +1,5 @@
 {
-  "name": "gh-actions-openshift",
+  "name": "enterprise-app",
   "version": "1.0.0",
   "main": "app.js",
   "dependencies": {

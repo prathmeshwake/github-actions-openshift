@@ -1,4 +1,4 @@
-name: CI/CD to OpenShift
+name: Enterprise CI/CD to OpenShift
 
 on:
   push:
@@ -16,26 +16,41 @@ jobs:
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/new-app:latest .
+        run: docker build -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/new-app:${{ github.sha }} .
 
       - name: Push Docker image
-        run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/new-app:latest
+        run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/new-app:${{ github.sha }}
 
-      - name: Install oc CLI
+      - name: Install oc & helm
         run: |
           curl -LO https://mirror.openshift.com/pub/openshift-v4/clients/oc/latest/linux/oc.tar.gz
           tar -xzf oc.tar.gz
           sudo mv oc /usr/local/bin/
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
       - name: Login to OpenShift
         run: oc login ${{ secrets.OPENSHIFT_SERVER }} --token=${{ secrets.OPENSHIFT_TOKEN }}
 
-      - name: Deploy to OpenShift
+      - name: Determine active color
+        id: color
         run: |
-            oc project ${{ secrets.OPENSHIFT_NAMESPACE }}
-            oc apply -f openshift/
-            oc rollout restart deployment/new-app
-            oc rollout status deployment/new-app
+          ACTIVE=$(oc get svc enterprise-app -o jsonpath='{.spec.selector.color}' 2>/dev/null || echo "blue")
+          if [ "$ACTIVE" = "blue" ]; then echo "next=green" >> $GITHUB_OUTPUT; else echo "next=blue" >> $GITHUB_OUTPUT; fi
 
+      - name: Helm Deploy (Blue/Green)
+        run: |
+          helm upgrade --install enterprise-app ./helm-chart \
+            --set image.repository=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/new-app \
+            --set image.tag=${{ github.sha }} \
+            --set activeColor=${{ steps.color.outputs.next }}
 
-          
+      - name: Health Check Validation
+        run: |
+          sleep 20
+          URL=$(oc get route enterprise-app -o jsonpath='{.spec.host}')
+          curl -f http://$URL/health
+
+      - name: Rollback on Failure
+        if: failure()
+        run: |
+          helm rollback enterprise-app
