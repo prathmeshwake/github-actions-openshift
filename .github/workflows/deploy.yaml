@@ -32,6 +32,10 @@ jobs:
 
       - name: Deploy to OpenShift
         run: |
-          oc project ${{ secrets.OPENSHIFT_NAMESPACE }}
-          oc apply -f openshift/
-          oc rollout status deployment/new-app
+            oc project ${{ secrets.OPENSHIFT_NAMESPACE }}
+            oc apply -f openshift/
+            oc rollout restart deployment/new-app
+            oc rollout status deployment/new-app
+
+
+          
