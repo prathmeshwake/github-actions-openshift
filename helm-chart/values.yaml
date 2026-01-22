@@ -10,21 +10,24 @@ image:
 service:
   port: 8080
 
-activeColor: blue   # for blue/green switching
+activeColor: blue
 
-# Service account (disable creation in sandbox)
 serviceAccount:
   create: false
   name: ""
 
-# Ingress (disable by default for OpenShift Sandbox)
 ingress:
-  enabled: false       # Helm will skip ingress.yaml
-  annotations: {}      # optional, only needed if enabled=true
-  hosts: []            # optional, only needed if enabled=true
-  tls: []              # optional, only needed if enabled=true
+  enabled: false
+  annotations: {}
+  hosts: []
+  tls: []
 
-# Environment variables from OpenShift secret
+httpRoute:
+  enabled: false
+  annotations: {}
+  hosts: []
+  paths: []
+
 env:
   - name: DB_USER
     valueFrom:
