@@ -39,7 +39,7 @@ jobs:
 
       - name: Helm Deploy (Blue/Green)
         run: |
-          helm upgrade --install enterprise-app ./helm-chart \
+          helm upgrade --install new-app ./helm-chart \
             --set image.repository=docker.io/${{ secrets.DOCKERHUB_USERNAME }}/new-app \
             --set image.tag=${{ github.sha }} \
             --set activeColor=${{ steps.color.outputs.next }}
