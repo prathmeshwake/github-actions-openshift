@@ -3,7 +3,7 @@ const app = express();
 const PORT = 8080;
 
 app.get('/', (req, res) => {
-  res.send('Hi I am back bro!');
+  res.send('Hi I am back bro now!');
 });
 
 app.get('/health', (req, res) => {
